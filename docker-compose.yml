@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: progress_tool
+      POSTGRES_USER: progress
+      POSTGRES_PASSWORD: progress
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: progress_tool
+      DB_USER: progress
+      DB_PASSWORD: progress
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
